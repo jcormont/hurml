@@ -8,6 +8,7 @@ export function find(data: HurmlValue, path: string): HurmlValue {
       // flatten array results
       let map: HurmlValue[] = [];
       for (let v of result.map(v => find(v, path))) {
+        if (v === undefined) continue;
         if (Array.isArray(v)) map.push(...v);
         else map.push(v);
       }
@@ -17,7 +18,18 @@ export function find(data: HurmlValue, path: string): HurmlValue {
       let idx = path.indexOf(".");
       let p = idx >= 0 ? path.slice(0, idx) : path;
       path = path.slice(p.length + 1);
-      result = result[p];
+      if (p in result) {
+        result = result[p];
+        continue;
+      }
+      let o = result;
+      result = undefined;
+      for (let q in o) {
+        if (q.toLowerCase() === p.toLowerCase()) {
+          result = o[q];
+          break;
+        }
+      }
       continue;
     }
     return undefined;

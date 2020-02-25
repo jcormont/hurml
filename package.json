@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "Human Readable Markup Language Parser",
   "main": "index.js",
+  "module": "./index.js",
+  "typings": "./index.d.ts",
   "prettier": {
     "printWidth": 120
   },

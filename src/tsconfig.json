@@ -1,11 +1,16 @@
 {
   "compilerOptions": {
-    "module": "CommonJS",
     "target": "ES5",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["es5"],
+    "outDir": "../dist",
     "strict": true,
-    "outDir": "../dist"
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "declaration": true
   },
-  "files": [
-    "index.ts"
-  ]
+  "files": ["index.ts"]
 }
+
