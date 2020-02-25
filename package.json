@@ -1,0 +1,19 @@
+{
+  "name": "hurml",
+  "version": "1.0.0",
+  "description": "Human Readable Markup Language Parser",
+  "main": "index.js",
+  "prettier": {
+    "printWidth": 120
+  },
+  "scripts": {
+    "build": "tsc -p src",
+    "test": "node test"
+  },
+  "keywords": [],
+  "author": "Jelmer Cormont",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^3.8.2"
+  }
+}
