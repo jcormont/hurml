@@ -1,13 +1,13 @@
-import { parseSection, HurmlValue, HurmlObject } from "./parse";
+import { parseSection, HurmlValue, HurmlToken, HurmlObject } from "./parse";
 
 /** Get the value from given (nested) property; any arrays (lists) are flattened while traversing the data structure */
-export function find(data: HurmlValue, path: string): HurmlValue {
+export function find(data: HurmlValue, ...path: string[]): HurmlValue {
   let result = data;
   while (path && path.length) {
     if (Array.isArray(result)) {
       // flatten array results
       let map: HurmlValue[] = [];
-      for (let v of result.map(v => find(v, path))) {
+      for (let v of result.map(v => find(v, ...path))) {
         if (v === undefined) continue;
         if (Array.isArray(v)) map.push(...v);
         else map.push(v);
@@ -15,9 +15,7 @@ export function find(data: HurmlValue, path: string): HurmlValue {
       return map;
     } else if (result instanceof HurmlObject) {
       // take closest property value
-      let idx = path.indexOf(".");
-      let p = idx >= 0 ? path.slice(0, idx) : path;
-      path = path.slice(p.length + 1);
+      let p = path.shift()!;
       if (p in result) {
         result = result[p];
         continue;
@@ -37,25 +35,28 @@ export function find(data: HurmlValue, path: string): HurmlValue {
   return result;
 }
 
-/** Match given string value with the value of given (nested) property; any arrays (lists) are flattened while traversing the data structure */
-export function match(data: HurmlValue, path: string, s: string): boolean {
-  let value = find(data, path);
+/** Match given string value or regular expression with the value of given (nested) property; any arrays (lists) are flattened while traversing the data structure */
+export function match(s: string | RegExp, data: HurmlValue, ...path: string[]): boolean {
+  let value = find(data, ...path);
   if (Array.isArray(value)) {
     // check if any element matches
-    return value.some(v => match(v, "", s));
+    return value.some(v => match(s, v));
   }
-  if (value instanceof HurmlObject) {
-    // check for property with this name
-    return !!value[s];
+  if (s instanceof RegExp) {
+    return value !== undefined && s.test(String(value));
   }
-
+  s = String(s ?? "");
+  if (s && value instanceof HurmlToken) {
+    // check case-insensitive token string
+    return String(value).toLowerCase() === s.toLowerCase();
+  }
   // check value itself
   return value !== undefined && String(value) === s;
 }
 
 /** Test if the value of given (nested) property is *not* false, undefined, 0, or empty string; any arrays (lists) are flattened while traversing the data structure */
-export function test(data: HurmlValue, path = ""): boolean {
-  let value = find(data, path);
+export function test(data: HurmlValue, ...path: string[]): boolean {
+  let value = find(data, ...path);
   if (Array.isArray(value)) {
     // check if any element matches
     return value.some(v => test(v));

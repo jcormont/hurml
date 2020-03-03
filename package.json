@@ -12,10 +12,13 @@
     "build": "tsc -p src",
     "test": "node test"
   },
-  "keywords": [],
+  "keywords": [
+    "markup",
+    "parser"
+  ],
   "author": "Jelmer Cormont",
   "license": "MIT",
-  "dependencies": {
+  "devDependencies": {
     "typescript": "^3.8.2"
   }
 }

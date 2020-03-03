@@ -30,7 +30,7 @@ export function parseSection(lines: string[], nestingLevel = 0) {
   let state: ParseState = { result: undefined };
   while (lines.length) {
     let line = lines.shift()!.trim();
-    if (line === "") continue;
+    if (line === "" || /^\#/.test(line)) continue;
     if (line === ")" && nestingLevel) {
       break;
     }
@@ -114,6 +114,8 @@ function getList(state: ParseState) {
     o.name = String(state.result);
     o[state.prop || "list"] = a;
     state.result = o;
+  } else {
+    state.result = a;
   }
   return a;
 }
@@ -123,7 +125,7 @@ function parseValue(s: string) {
   if (s === "") return undefined;
   if (s === "true") return true;
   if (s === "false") return false;
-  if (/^[\d_]+\.\d+|\.[\d_]+/.test(s)) return parseFloat(s.replace(/_/g, ""));
+  if (/^(?:[\d_]+(?:\.\d+)?)|^(?:\.[\d_]+)/.test(s)) return parseFloat(s.replace(/_/g, ""));
   let matchString = s.match(/^["'“”‘’](.*)["'“”‘’]$/);
   if (matchString) return matchString[1];
   let tokens = s
