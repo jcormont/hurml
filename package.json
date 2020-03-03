@@ -1,6 +1,6 @@
 {
   "name": "hurml",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Human Readable Markup Language Parser",
   "main": "index.js",
   "module": "./index.js",
